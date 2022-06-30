@@ -13,18 +13,17 @@ class Profile(models.Model):
         return self.user
   
 class Destination(models.Model):
-    name = models.CharField(max_length=100)  
-    
+    name = models.CharField(max_length=100)
     def __str__(self):
         return self.name
     
 class Parcel(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=80)
     photo = CloudinaryField('parcel_pic', blank=True)
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     weighted = models.IntegerField()
-    destination = models.ForeignKey('Destination', on_delete=models.CASCADE)
+    # destination = models.ForeignKey(Destination,on_delete=models.CASCADE)
     
     def __str__(self):
         return self.name
