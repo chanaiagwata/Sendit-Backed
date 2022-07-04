@@ -32,10 +32,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             'date_created'
             )
         
-# class DestinationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Destination
-#         fields = ('id','name')
         
 class ParcelSerializer(serializers.ModelSerializer):
     class Meta:

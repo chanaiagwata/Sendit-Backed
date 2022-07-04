@@ -19,7 +19,7 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE, related_name='profile')
+    user = models.ForeignKey(User,on_delete=models.CASCADE, related_name='profile')
     profile_pic = CloudinaryField('profile_pic', blank=True)
     location = models.CharField(max_length=255, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -38,10 +38,6 @@ def save_profile(sender, instance, **kwargs):
     instance.profile.save()
 
   
-# class Destination(models.Model):
-#     name = models.CharField(max_length=100)
-#     def __str__(self):
-#         return self.name
     
 class Parcel(models.Model):
     name = models.CharField(max_length=80)
@@ -50,8 +46,7 @@ class Parcel(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=2)
     weight = models.IntegerField()
     destination = models.CharField(max_length=100)
-    # destination = models.ForeignKey(Destination,on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.name
 

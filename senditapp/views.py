@@ -80,8 +80,6 @@ class LogoutView(APIView):
         return response
     
         
-        
-        
 class ProfileList(APIView):
     def get(self, request, format=None):
         all_profile = Profile.objects.all()
@@ -97,22 +95,6 @@ class ProfileList(APIView):
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
-    
-# class DestinationList(APIView):
-#     def get(self, request, format=None):
-#         all_destination = Destination.objects.all()
-#         serializers = DestinationSerializer(all_destination, many=True)
-        
-#         return Response(serializers.data)
-    
-#     def post(self, request, format=None):
-#         serializers = ParcelSerializer(data=request.data)
-#         permission_classes = (IsAdminOrReadOnly,)
-#         if serializers.is_valid():
-#             serializers.save()
-#             return Response(serializers.data, status=status.HTTP_201_CREATED)
-#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ParcelList(APIView):
     def get(self, request, format=None):
@@ -133,7 +115,7 @@ class ParcelDescription(APIView):
     permission_classes = (IsAdminOrReadOnly,)
     def get_parcel(self,pk):
         try:
-            return Parcel.objects.get(pk=pk)
+            return Parcel.objects.get(id=pk)
         except Parcel.DoesNotExist:
             return Http404
     def get(self, request, pk, format=None):
