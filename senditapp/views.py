@@ -21,6 +21,11 @@ def getRoutes(request):
     routes = [
         'api/admin',
         'api/client',
+        'api/profile',
+        'api/parcel',
+        'api/parcel/<int:pk>',
+        'api/login',
+        'api/logout',
     ]
     return Response(routes)
 
@@ -50,76 +55,47 @@ class ClientSignUpView(generics.GenericAPIView):
         context = {
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
             'token': Token.objects.get(user=user).key,
-            'message': 'account made successfully'
+            'message': 'account created successfully'
         }
         return Response(context)
 
 
-# class RegisterView(APIView):
-#     def post(self, request):
-#         serializer = UserSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data)
-    
-#     def get(self, request, format=None):
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
         
-#         users = User.objects.all()
-#         serializer = UserSerializer(users, many=True)
-#         return Response(serializer.data)
+        user = User.objects.filter(email=email).first()
 
-# class LoginView(APIView):
-#     def post(self, request):
-#         email = request.data['email']
-#         password = request.data['password']
+        if user is None:
+            raise AuthenticationFailed('User not found!')
+
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect password!')
         
-#         user = User.objects.filter(email=email).first()
-
-#         if user is None:
-#             raise AuthenticationFailed('User not found!')
-
-#         if not user.check_password(password):
-#             raise AuthenticationFailed('Incorrect password!')
+        payload = {
+            'id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow()
+        }
         
-#         payload = {
-#             'id': user.id,
-#             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-#             'iat': datetime.datetime.utcnow()
-#         }
+        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
         
-#         token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
-        
-#         response = Response()
-#         response.set_cookie(key='jwt', value=token, httponly=True)
-#         response.data = {
-#             'jwt':token
-#         }
-#         return response
-
-# class UserView(APIView):
-#     def get(self, request):
-#         token = request.COOKIES.get('jwt')
-        
-#         if not token:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         try:
-#             payload = jwt.decode(token, 'secret', algorithm=['HS256'])
-#         except jwt.ExpiredSignatureError:
-#             raise AuthenticationFailed('Unauthenticated!')
-
-#         user = User.objects.filter(id=payload['id']).first()
-#         serializer = UserSerializer(user)
-#         return Response(serializer.data)
-    
-# class LogoutView(APIView):
-#     def post(self, request):
-#         response = Response()
-#         response.delete_cookie('jwt')
-#         response.data = {
-#             'message': 'success'
-#         }
-#         return response
+        response = Response()
+        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.data = {
+            'jwt':token
+        }
+        return response
+   
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('jwt')
+        response.data = {
+            'message': 'Logout Successful'
+        }
+        return response
     
         
 class ProfileList(APIView):

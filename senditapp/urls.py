@@ -12,13 +12,8 @@ urlpatterns = [
     path('api/parcel', views.ParcelList.as_view()),
     path('api/parcel/<int:pk>',views.ParcelDescription.as_view()),
     path('api/api-token-auth', obtain_auth_token ,name='api_token_auth'),
-    
-    
-    
-    # path('register', RegisterView.as_view()),
-    # path('login', LoginView.as_view()),
-    # path('user', UserView.as_view()),
-    # path('logout', LogoutView.as_view()),
+    path('api/login', LoginView.as_view()),
+    path('api/logout', LogoutView.as_view()),
 
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
