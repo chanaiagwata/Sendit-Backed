@@ -67,7 +67,7 @@ class Parcel(models.Model):
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     weight = models.IntegerField()
-    parcel_status = models.ForeignKey(ParcelStatus)
+    parcel_status = models.ForeignKey(ParcelStatus, on_delete=models.SET_NULL, null=True)
     destination = models.CharField(max_length=100)
 
     def __str__(self):
