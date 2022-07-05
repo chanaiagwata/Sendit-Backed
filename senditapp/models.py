@@ -38,7 +38,7 @@ class Client(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = CloudinaryField('profile_pic', blank=True)
     location = models.CharField(max_length=255, null=False)
     date_created = models.DateTimeField(auto_now_add=True)
