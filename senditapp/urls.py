@@ -1,17 +1,24 @@
 from django.urls import path
 from . import views
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import RegisterView, LoginView, UserView, LogoutView
-
+from .views import *
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    path('profile/', views.ProfileList.as_view()),
-    path('parcel', views.ParcelList.as_view()),
-    path('parcel/<int:pk>',views.ParcelDescription.as_view()),
-    path('api-token-auth', obtain_auth_token ,name='api_token_auth'),
-    path('register', RegisterView.as_view()),
-    path('login', LoginView.as_view()),
-    path('user', UserView.as_view()),
-    path('logout', LogoutView.as_view()),
+    path('',views.getRoutes),
+    path('api/admin',views.AdminSignUpView.as_view()),
+    path('api/client',views.ClientSignUpView.as_view()),
+    path('api/profile/', views.ProfileList.as_view()),
+    path('api/parcel', views.ParcelList.as_view()),
+    path('api/parcel/<int:pk>',views.ParcelDescription.as_view()),
+    path('api/api-token-auth', obtain_auth_token ,name='api_token_auth'),
+    
+    
+    
+    # path('register', RegisterView.as_view()),
+    # path('login', LoginView.as_view()),
+    # path('user', UserView.as_view()),
+    # path('logout', LogoutView.as_view()),
 
 ]
+urlpatterns = format_suffix_patterns(urlpatterns)

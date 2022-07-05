@@ -9,75 +9,117 @@ from .serializer import *
 from .permissions import IsAdminOrReadOnly
 from django.contrib.auth import get_user_model
 import jwt, datetime
+from rest_framework import generics
+from rest_framework.decorators import api_view
 
 User = get_user_model()
 
 # Create your views here.
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
+
+@api_view(['GET'])
+def getRoutes(request):
+    routes = [
+        'api/admin',
+        'api/client',
+    ]
+    return Response(routes)
+
+
+class AdminSignUpView(generics.GenericAPIView):
+    serializer_class = AdminSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        user = serializer.save()
+        context = {
+            'user': UserSerializer(user, context=self.get_serializer_context()).data,
+            'token': Token.objects.get(user=user).key,
+            'message': 'account created successfully'
+        }
+        return Response(context)
+
+
+class ClientSignUpView(generics.GenericAPIView):
+    serializer_class = ClientSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        context = {
+            'user': UserSerializer(user, context=self.get_serializer_context()).data,
+            'token': Token.objects.get(user=user).key,
+            'message': 'account made successfully'
+        }
+        return Response(context)
+
+
+# class RegisterView(APIView):
+#     def post(self, request):
+#         serializer = UserSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
     
-    def get(self, request, format=None):
+#     def get(self, request, format=None):
         
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+#         users = User.objects.all()
+#         serializer = UserSerializer(users, many=True)
+#         return Response(serializer.data)
 
-class LoginView(APIView):
-    def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
+# class LoginView(APIView):
+#     def post(self, request):
+#         email = request.data['email']
+#         password = request.data['password']
         
-        user = User.objects.filter(email=email).first()
+#         user = User.objects.filter(email=email).first()
 
-        if user is None:
-            raise AuthenticationFailed('User not found!')
+#         if user is None:
+#             raise AuthenticationFailed('User not found!')
 
-        if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password!')
+#         if not user.check_password(password):
+#             raise AuthenticationFailed('Incorrect password!')
         
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
+#         payload = {
+#             'id': user.id,
+#             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+#             'iat': datetime.datetime.utcnow()
+#         }
         
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+#         token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
         
-        response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {
-            'jwt':token
-        }
-        return response
+#         response = Response()
+#         response.set_cookie(key='jwt', value=token, httponly=True)
+#         response.data = {
+#             'jwt':token
+#         }
+#         return response
 
-class UserView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
+# class UserView(APIView):
+#     def get(self, request):
+#         token = request.COOKIES.get('jwt')
         
-        if not token:
-            raise AuthenticationFailed('Unauthenticated!')
+#         if not token:
+#             raise AuthenticationFailed('Unauthenticated!')
 
-        try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
+#         try:
+#             payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+#         except jwt.ExpiredSignatureError:
+#             raise AuthenticationFailed('Unauthenticated!')
 
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
+#         user = User.objects.filter(id=payload['id']).first()
+#         serializer = UserSerializer(user)
+#         return Response(serializer.data)
     
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response()
-        response.delete_cookie('jwt')
-        response.data = {
-            'message': 'success'
-        }
-        return response
+# class LogoutView(APIView):
+#     def post(self, request):
+#         response = Response()
+#         response.delete_cookie('jwt')
+#         response.data = {
+#             'message': 'success'
+#         }
+#         return response
     
         
 class ProfileList(APIView):
