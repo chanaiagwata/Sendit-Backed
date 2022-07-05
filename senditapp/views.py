@@ -8,7 +8,6 @@ from .models import *
 from .serializer import *
 from .permissions import IsAdminOrReadOnly
 from django.contrib.auth import get_user_model
-import jwt, datetime
 from rest_framework import generics
 from rest_framework.decorators import api_view
 
