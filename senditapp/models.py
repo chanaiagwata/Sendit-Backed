@@ -51,7 +51,14 @@ class Profile(models.Model):
 def update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-        
+
+
+class ParcelStatus(models.Model): 
+    status = models.CharField(max_length=300)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Parcel Status {self.status}'
 
     
 class Parcel(models.Model):
@@ -60,6 +67,7 @@ class Parcel(models.Model):
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     weight = models.IntegerField()
+    parcel_status = models.ForeignKey(ParcelStatus, on_delete=models.SET_NULL, null=True)
     destination = models.CharField(max_length=100)
 
     def __str__(self):

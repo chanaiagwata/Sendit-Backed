@@ -80,12 +80,5 @@ class ProfileSerializer(serializers.ModelSerializer):
 class ParcelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parcel
-        fields = (
-            'id',
-            'name', 
-            'description',
-            'price',
-            'weight',
-            'destination'
-            )
+        fields = "__all__"
         
