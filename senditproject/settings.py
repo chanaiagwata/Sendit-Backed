@@ -13,9 +13,12 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import dj_database_url
 from decouple import config,Csv
 from pathlib import Path
+import django_heroku
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,6 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
 ]
 
 ROOT_URLCONF = 'senditproject.urls'
@@ -89,7 +94,8 @@ WSGI_APPLICATION = 'senditproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-MODE="dev"
+MODE=config("MODE", default="dev")
+DEBUG = config('DEBUG', default=False, cast=bool)
 if MODE=="dev":
    DATABASES = {
        'default': {
@@ -149,10 +155,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = 'static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -166,3 +182,12 @@ AUTH_USER_MODEL = 'senditapp.User'
 ACCOUNT_UNIQUE_EMAIL=True
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+# Domains that can get access to the API
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200", # Angular server in development
+    "https://chanaiagwata.github.io",# where you've hosted your angular application
+]
+# Heroku: Update database configuration from $DATABASE_URL.
+
+django_heroku.settings(locals())
