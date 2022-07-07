@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'senditproject.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 MODE=config("MODE", default="dev")
 DEBUG = config('DEBUG', default=False, cast=bool)
-if MODE=="dev":
+if config('MODE')=="dev":
    DATABASES = {
        'default': {
            'ENGINE': 'django.db.backends.postgresql_psycopg2',

@@ -97,7 +97,24 @@ class LogoutView(APIView):
         }
         return response
     
+
+# @api_view(['GET', 'PUT', 'DELETE'])
+# def ProfileList(request, format=None):
+#     if request.method == 'GET':
+#         profiles = Profile.objects.all()
+#         serializer = ProfileSerializer(profiles, many=True)
+#         return Response(serializer.data)
+    
+#     if request.method == 'POST':
+#         serializer = ProfileSerializer(data=request.data)
         
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status.HTTP_201.CREATED)
+        
+
+
+      
 class ProfileList(APIView):
     def get(self, request, format=None):
         all_profile = Profile.objects.all()
