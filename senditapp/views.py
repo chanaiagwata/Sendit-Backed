@@ -27,6 +27,8 @@ def getRoutes(request):
         'api/client',
         'api/profile',
         'api/parcel',
+        'api/profile/<int:id>',
+        'api/parcel/<int:id>/'
         'api/parcel/<int:pk>',
         'api/login',
         'api/logout',
