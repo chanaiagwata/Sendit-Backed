@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from email.policy import default
 import dj_database_url
 from decouple import config,Csv
 from pathlib import Path
@@ -94,9 +95,9 @@ WSGI_APPLICATION = 'senditproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-MODE="dev"
+MODE=config("MODE", default="dev")
 DEBUG = config('DEBUG', default=False, cast=bool)
-if MODE=="dev":
+if config('MODE')=="dev":
    DATABASES = {
        'default': {
            'ENGINE': 'django.db.backends.postgresql_psycopg2',
