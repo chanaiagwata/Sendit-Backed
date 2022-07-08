@@ -1,4 +1,5 @@
-from django.http import Http404
+from sys import api_version
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +12,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework.decorators import api_view
 import jwt, datetime
+from rest_framework.parsers import JSONParser
+
+from senditapp import serializer
 
 User = get_user_model()
 
@@ -98,53 +102,111 @@ class LogoutView(APIView):
         return response
     
 
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def ProfileList(request, format=None):
-#     if request.method == 'GET':
-#         profiles = Profile.objects.all()
-#         serializer = ProfileSerializer(profiles, many=True)
-#         return Response(serializer.data)
+@api_view(['GET', 'POST'])
+def ProfileList(request, format=None):
+    if request.method == 'GET':
+        profiles = Profile.objects.all()
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
     
-#     if request.method == 'POST':
-#         serializer = ProfileSerializer(data=request.data)
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = ProfileSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+@api_view(['GET', 'PUT', 'DELETE'])
+def Profile_detail(request, id, format=None): 
+        try:
+            profile = Profile.objects.get(pk=id)
+        except Profile.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status.HTTP_201.CREATED)
+        if request.method == 'GET':
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
         
+        elif request.method == 'PUT':
+            data = JSONParser().parse(request)
+            serializer = ProfileSerializer(profile, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'DELETE':
+            profile.delete()
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-      
-class ProfileList(APIView):
-    def get(self, request, format=None):
-        all_profile = Profile.objects.all()
-        serializers = ProfileSerializer(all_profile, many=True)
+@api_view(['GET', 'POST'])
+def ParcelList(request, format=None):
+    if request.method == 'GET':
+        parcels = Parcel.objects.all()
+        serializer = ParcelSerializer(parcels, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = ParcelSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def Parcel_detail(request, id, format=None): 
+        try:
+            parcel = Parcel.objects.get(pk=id)
+        except Parcel.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         
-        return Response(serializers.data)
-    
-    def post(self, request, format=None):
-        serializers = ProfileSerializer(data=request.data)
-        permission_classes = (IsAdminOrReadOnly,)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-class ParcelList(APIView):
-    def get(self, request, format=None):
-        all_parcel = Parcel.objects.all()
-        serializers = ParcelSerializer(all_parcel, many=True)
+        if request.method == 'GET':
+            serializer = ParcelSerializer(parcel)
+            return Response(serializer.data)
         
-        return Response(serializers.data)
+        elif request.method == 'PUT':
+            data = JSONParser().parse(request)
+            serializer = ParcelSerializer(parcel, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return JsonResponse(serializer.data)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'DELETE':
+            parcel.delete()
+            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        
+        
+# class ProfileList(APIView):
+#     def get(self, request, format=None):
+#         all_profile = Profile.objects.all()
+#         serializers = ProfileSerializer(all_profile, many=True)
+        
+#         return Response(serializers.data)
     
-    def post(self, request, format=None):
-        serializers = ParcelSerializer(data=request.data)
-        permission_classes = (IsAdminOrReadOnly,)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def post(self, request, format=None):
+#         serializers = ProfileSerializer(data=request.data)
+#         permission_classes = (IsAdminOrReadOnly,)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_201_CREATED)
+#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+# class ParcelList(APIView):
+#     def get(self, request, format=None):
+#         all_parcel = Parcel.objects.all()
+#         serializers = ParcelSerializer(all_parcel, many=True)
+        
+#         return Response(serializers.data)
+    
+#     def post(self, request, format=None):
+#         serializers = ParcelSerializer(data=request.data)
+#         permission_classes = (IsAdminOrReadOnly,)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_201_CREATED)
+#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ParcelDescription(APIView):
     permission_classes = (IsAdminOrReadOnly,)

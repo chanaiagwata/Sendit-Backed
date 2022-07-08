@@ -73,3 +73,11 @@ class Parcel(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ["-pk"]
+
+    def save_parcel(self):
+        self.save()
+
+    def delete_parcel(self):
+        self.delete()
