@@ -178,7 +178,7 @@ def Parcel_detail(request, id, format=None):
             parcel.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
         
-        
+
 # class ProfileList(APIView):
 #     def get(self, request, format=None):
 #         all_profile = Profile.objects.all()
