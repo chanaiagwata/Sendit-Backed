@@ -14,7 +14,6 @@ from rest_framework.decorators import api_view
 import jwt, datetime
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
-
 from senditapp import serializer
 
 User = get_user_model()
@@ -29,7 +28,7 @@ def getRoutes(request):
         'api/profile',
         'api/parcel',
         'api/profile/<int:id>',
-        'api/parcel/<int:id>/'
+        'api/parcel/<int:id>',
         'api/parcel/<int:pk>',
         'api/login',
         'api/logout',
@@ -85,8 +84,8 @@ class LoginView(APIView):
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
         }
-
-        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+        
+        token = jwt.encode(payload, 'secret', algorithm='HS256').decode('UTF-8')
 
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
@@ -142,8 +141,7 @@ def Profile_detail(request, id, format=None):
         elif request.method == 'DELETE':
             profile.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-    
-@csrf_exempt   
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def ParcelList(request, format=None):
     if request.method == 'GET':
@@ -157,7 +155,7 @@ def ParcelList(request, format=None):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@csrf_exempt         
+@csrf_exempt   
 @api_view(['GET', 'PUT', 'DELETE'])
 def Parcel_detail(request, id, format=None): 
         try:
@@ -179,8 +177,7 @@ def Parcel_detail(request, id, format=None):
         elif request.method == 'DELETE':
             parcel.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-    
-    
+
 # class ProfileList(APIView):
 #     def get(self, request, format=None):
 #         all_profile = Profile.objects.all()
@@ -211,7 +208,6 @@ def Parcel_detail(request, id, format=None):
 #             serializers.save()
 #             return Response(serializers.data, status=status.HTTP_201_CREATED)
 #         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ParcelDescription(APIView):
     permission_classes = (IsAdminOrReadOnly,)
