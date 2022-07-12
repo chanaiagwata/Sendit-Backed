@@ -141,7 +141,7 @@ def Profile_detail(request, id, format=None):
             profile.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def ParcelList(request, format=None):
     if request.method == 'GET':
@@ -156,7 +156,7 @@ def ParcelList(request, format=None):
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
- 
+@csrf_exempt   
 @api_view(['GET', 'PUT', 'DELETE'])
 def Parcel_detail(request, id, format=None): 
         try:
