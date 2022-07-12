@@ -13,7 +13,7 @@ from rest_framework import generics
 from rest_framework.decorators import api_view
 import jwt, datetime
 from rest_framework.parsers import JSONParser
-
+from django.views.decorators.csrf import csrf_exempt
 from senditapp import serializer
 
 User = get_user_model()
@@ -141,7 +141,7 @@ def Profile_detail(request, id, format=None):
             profile.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
-
+@csrf_exempt
 @api_view(['GET', 'POST'])
 def ParcelList(request, format=None):
     if request.method == 'GET':
@@ -155,7 +155,8 @@ def ParcelList(request, format=None):
             serializer.save()
             return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+ 
+@csrf_exempt   
 @api_view(['GET', 'PUT', 'DELETE'])
 def Parcel_detail(request, id, format=None): 
         try:
@@ -209,7 +210,7 @@ def Parcel_detail(request, id, format=None):
 #             serializers.save()
 #             return Response(serializers.data, status=status.HTTP_201_CREATED)
 #         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+ 
 class ParcelDescription(APIView):
     permission_classes = (IsAdminOrReadOnly,)
     def get_parcel(self,pk):
