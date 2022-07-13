@@ -160,7 +160,7 @@ def Parcel_detail(request, pk, format=None):
         try:
             parcel = Parcel.objects.get(id=pk)
         except Parcel.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND)
         
         if request.method == 'GET':
             serializer = ParcelSerializer(parcel)
@@ -170,11 +170,11 @@ def Parcel_detail(request, pk, format=None):
             serializer = ParcelSerializer(parcel, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse(serializer.data)
-            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         elif request.method == 'DELETE':
             parcel.delete()
-            return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 # class ProfileList(APIView):
 #     def get(self, request, format=None):
@@ -220,7 +220,7 @@ class ParcelDescription(APIView):
         return Response(serializers.data)
     
     def put(self, request, pk, format=None):
-        parcel = self.get_parcel(pk)
+        parcel = self.get_parcel(id = pk)
         serializers = ParcelSerializer(parcel, request.data)
         if serializers.is_valid():
             serializers.save()
