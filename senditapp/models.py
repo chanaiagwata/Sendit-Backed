@@ -63,11 +63,11 @@ class ParcelStatus(models.Model):
     
 class Parcel(models.Model):
     name = models.CharField(max_length=80)
-    photo = CloudinaryField('parcel_pic', blank=True)
+    photo = CloudinaryField('parcel_pic', blank=True, null=True)
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
     weight = models.IntegerField()
-    parcel_status = models.ForeignKey(ParcelStatus, on_delete=models.SET_NULL, blank=True, null=True)
+    parcel_status = models.ForeignKey(ParcelStatus, on_delete=models.SET_NULL, blank=True, null=True, related_name='parcel')
     destination = models.CharField(max_length=100)
 
     def __str__(self):
@@ -78,6 +78,11 @@ class Parcel(models.Model):
 
     def save_parcel(self):
         self.save()
+
+    @property
+    def status(self):
+        return self.parcel_status.status
+
 
     def delete_parcel(self):
         self.delete()
