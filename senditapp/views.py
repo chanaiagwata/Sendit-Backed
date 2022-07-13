@@ -220,7 +220,7 @@ class ParcelDescription(APIView):
         return Response(serializers.data)
     
     def put(self, request, pk, format=None):
-        parcel = self.get_parcel(pk)
+        parcel = self.get_parcel(id = pk)
         serializers = ParcelSerializer(parcel, request.data)
         if serializers.is_valid():
             serializers.save()
