@@ -35,7 +35,6 @@ def getRoutes(request):
     ]
     return Response(routes)
 
-
 class AdminSignUpView(generics.GenericAPIView):
     serializer_class = AdminSerializer
 
@@ -50,7 +49,6 @@ class AdminSignUpView(generics.GenericAPIView):
         }
         return Response(context)
 
-
 class ClientSignUpView(generics.GenericAPIView):
     serializer_class = ClientSerializer
 
@@ -64,7 +62,6 @@ class ClientSignUpView(generics.GenericAPIView):
             'message': 'account created successfully'
         }
         return Response(context)
-
 
 class LoginView(APIView):
     def post(self, request):
@@ -141,6 +138,8 @@ def Profile_detail(request, id, format=None):
         elif request.method == 'DELETE':
             profile.delete()
             return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def ParcelList(request, format=None):
@@ -157,9 +156,9 @@ def ParcelList(request, format=None):
 
 @csrf_exempt   
 @api_view(['GET', 'PUT', 'DELETE'])
-def Parcel_detail(request, id, format=None): 
+def Parcel_detail(request, pk, format=None): 
         try:
-            parcel = Parcel.objects.get(pk=id)
+            parcel = Parcel.objects.get(id=pk)
         except Parcel.DoesNotExist:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         
@@ -168,8 +167,7 @@ def Parcel_detail(request, id, format=None):
             return Response(serializer.data)
     
         elif request.method == 'PUT':
-            data = JSONParser().parse(request)
-            serializer = ParcelSerializer(parcel, data=data)
+            serializer = ParcelSerializer(parcel, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return JsonResponse(serializer.data)
