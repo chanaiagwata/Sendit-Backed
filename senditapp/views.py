@@ -170,7 +170,7 @@ def Parcel_detail(request, pk, format=None):
             serializer = ParcelSerializer(parcel, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return JsonResponse(serializer.data)
+                return HttpResponse(serializer.data)
             return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         elif request.method == 'DELETE':
             parcel.delete()
