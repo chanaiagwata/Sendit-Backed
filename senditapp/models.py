@@ -66,7 +66,7 @@ class Parcel(models.Model):
     photo = CloudinaryField('parcel_pic', blank=True, null=True)
     description = models.TextField(max_length=255)
     price = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
-    weight = models.IntegerField()
+    weight = models.IntegerField(null=True, blank=True)
     parcel_status = models.ForeignKey(ParcelStatus, on_delete=models.SET_NULL, blank=True, null=True, related_name='parcel')
     destination = models.CharField(max_length=100)
 
